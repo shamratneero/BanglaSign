@@ -1,4 +1,13 @@
 services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: tango
+      POSTGRES_USER: tango
+      POSTGRES_PASSWORD: tango
+    volumes:
+      - tango_pgdata:/var/lib/postgresql/data
+
   backend:
     build: ./backend
     ports:
@@ -7,5 +16,16 @@ services:
       - ./backend/.env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.dev
+      DB_ENGINE: postgres
+      POSTGRES_DB: tango
+      POSTGRES_USER: tango
+      POSTGRES_PASSWORD: tango
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    depends_on:
+      - db
     volumes:
       - ./backend:/app
+
+volumes:
+  tango_pgdata:
