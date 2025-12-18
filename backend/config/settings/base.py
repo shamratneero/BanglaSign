@@ -11,7 +11,16 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret")
 DEBUG = False
 
 raw_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+raw_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
+
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "backend", "gateway"]
+
+
+
+#DJANGO_SETTINGS_MODULE: config.settings.dev
+
 
 
 INSTALLED_APPS = [
@@ -21,10 +30,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+
+
 
     # third-party
-    "rest_framework",
     "corsheaders",
+    "api",
 ]
 
 MIDDLEWARE = [

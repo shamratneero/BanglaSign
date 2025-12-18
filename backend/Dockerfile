@@ -17,3 +17,6 @@ COPY . /app
 
 # collectstatic at runtime if you want; for now we keep it simple
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+
+
+
