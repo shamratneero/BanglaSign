@@ -1,0 +1,93 @@
+import { Link } from "react-router-dom";
+import "../styles/auth.css";
+
+export default function Register() {
+  return (
+    <div className="authPage">
+      <div className="authShell">
+        {/* LEFT: Image panel */}
+        <aside className="authMedia">
+          <div className="authMediaTop">
+            <div className="brandMark">TANGO</div>
+
+            <a className="ghostPill" href="/" onClick={(e) => e.preventDefault()}>
+              Back to website <span aria-hidden>→</span>
+            </a>
+          </div>
+
+          <div className="authMediaBody">
+            <div className="mediaCopy">
+              <div className="mediaTitle">Bangla Sign Language</div>
+              <div className="mediaSub">Real-time translation workspace</div>
+            </div>
+
+            <div className="mediaDots" aria-hidden>
+              <span />
+              <span />
+              <span className="active" />
+              <span />
+            </div>
+          </div>
+        </aside>
+
+        {/* RIGHT: Form panel */}
+        <main className="authFormWrap">
+          <div className="authForm">
+            <h1 className="authTitle">Create an account</h1>
+            <p className="authSubtitle">
+              Already have an account? <Link to="/login">Log in</Link>
+            </p>
+
+            <div className="grid2">
+              <div className="field">
+                <label>First name</label>
+                <input placeholder="Shamrat" />
+              </div>
+              <div className="field">
+                <label>Last name</label>
+                <input placeholder="Neero" />
+              </div>
+            </div>
+
+            <div className="field">
+              <label>Email</label>
+              <input type="email" placeholder="you@example.com" />
+            </div>
+
+            <div className="field">
+              <label>Password</label>
+              <div className="inputRow">
+                <input type="password" placeholder="Enter your password" />
+                <button className="iconBtn" type="button" aria-label="Show password">
+                  👁
+                </button>
+              </div>
+            </div>
+
+            <label className="checkRow">
+              <input type="checkbox" />
+              <span>
+                I agree to the <a href="#" onClick={(e) => e.preventDefault()}>Terms &amp; Conditions</a>
+              </span>
+            </label>
+
+            <button className="primaryBtn">Create account</button>
+
+            <div className="divider">
+              <span>Or register with</span>
+            </div>
+
+            <div className="socialRow">
+              <button className="socialBtn" type="button">
+                <span className="socialIcon">G</span> Google
+              </button>
+              <button className="socialBtn" type="button">
+                <span className="socialIcon"></span> Apple
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,86 @@
+import { Link } from "react-router-dom";
+import "../styles/auth.css";
+
+export default function Login() {
+  return (
+    <div className="authPage">
+      <div className="authShell">
+        {/* LEFT */}
+        <aside className="authMedia">
+          <div className="authMediaTop">
+            <div className="brandMark">TANGO</div>
+            <a className="ghostPill" href="/" onClick={(e) => e.preventDefault()}>
+              Back to website <span aria-hidden>→</span>
+            </a>
+          </div>
+
+          <div className="authMediaBody">
+            <div className="mediaCopy">
+              <div className="mediaTitle">Project Tango</div>
+              <div className="mediaSub">Bangla Sign Language Workspace</div>
+            </div>
+
+            <div className="mediaDots" aria-hidden>
+              <span />
+              <span className="active" />
+              <span />
+              <span />
+            </div>
+          </div>
+        </aside>
+
+        {/* RIGHT */}
+        <main className="authFormWrap">
+          <div className="authForm">
+            <h1 className="authTitle">Sign in</h1>
+            <p className="authSubtitle">
+              Don’t have an account? <Link to="/register">Create one</Link>
+            </p>
+
+            <div className="field">
+              <label>Email</label>
+              <input type="email" placeholder="you@example.com" />
+            </div>
+
+            <div className="field">
+              <label>Password</label>
+              <div className="inputRow">
+                <input type="password" placeholder="Enter your password" />
+                <button className="iconBtn" type="button" aria-label="Show password">
+                  👁
+                </button>
+              </div>
+            </div>
+
+            <div className="rowBetween">
+              <span />
+              <Link className="tinyLink" to="/forgot">
+                Forgot password?
+              </Link>
+            </div>
+
+            <button className="primaryBtn">Sign in</button>
+
+            <div className="divider">
+              <span>Or continue with</span>
+            </div>
+
+            <div className="socialRow">
+              <button className="socialBtn" type="button">
+                <span className="socialIcon">G</span> Google
+              </button>
+              <button className="socialBtn" type="button">
+                <span className="socialIcon">f</span> Facebook
+              </button>
+            </div>
+
+            <p className="footNote">
+              By continuing you agree to our <a href="#" onClick={(e) => e.preventDefault()}>Terms</a> &amp;{" "}
+              <a href="#" onClick={(e) => e.preventDefault()}>Privacy</a>.
+            </p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

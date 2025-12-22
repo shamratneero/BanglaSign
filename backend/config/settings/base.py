@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     # third-party
     "corsheaders",
     "api",
+
+    
 ]
 
 MIDDLEWARE = [
@@ -120,3 +122,34 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+from datetime import timedelta
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "api.authentication.CookieJWTAuthentication",
+    ),
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+# Cookies (dev-friendly)
+JWT_AUTH_COOKIE = "tango_access"
+JWT_REFRESH_COOKIE = "tango_refresh"
+
+# For local dev behind nginx
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
+]
