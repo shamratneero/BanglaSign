@@ -1,27 +1,51 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
+import { useAuth } from "../auth/useAuth";
 
 export default function Login() {
   const nav = useNavigate();
-  const [email, setEmail] = useState("you@example.com");
-  const [password, setPassword] = useState("password");
+  const { login, refreshMe } = useAuth();
+
+  const [email, setEmail] = useState("you@example.com"); // used as username
+  const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: hook API later
-    nav("/dashboard");
+    setError(null);
+
+    const username = email.trim();
+    if (!username) {
+      setError("Email/username is required");
+      return;
+    }
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await login(username, password);
+      await refreshMe();
+      nav("/dashboard", { replace: true });
+    } catch (err: any) {
+      setError(err?.message || "Login failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="authPage">
       <div className="authShell">
-
         {/* Left media */}
         <div className="authMedia">
           <div className="authMediaInner">
-
             <div className="authMediaTop">
               <div className="brandRow">
                 <div className="brandBadge">T</div>
@@ -31,11 +55,7 @@ export default function Login() {
                 </div>
               </div>
 
-              <a
-                className="ghostPill"
-                href="/"
-                onClick={(e) => e.preventDefault()}
-              >
+              <a className="ghostPill" href="/" onClick={(e) => e.preventDefault()}>
                 Back to website →
               </a>
             </div>
@@ -49,7 +69,6 @@ export default function Login() {
                 clean workflow. Sign in to continue.
               </p>
             </div>
-
           </div>
         </div>
 
@@ -63,13 +82,13 @@ export default function Login() {
             </p>
 
             <div className="field">
-              <label>Email</label>
+              <label>Email / Username</label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                type="email"
-                autoComplete="email"
+                type="text"
+                autoComplete="username"
               />
             </div>
 
@@ -96,34 +115,28 @@ export default function Login() {
 
             <div className="rowBetween">
               <span />
-              <a
-                className="tinyLink"
-                href="/"
-                onClick={(e) => e.preventDefault()}
-              >
+              <a className="tinyLink" href="/" onClick={(e) => e.preventDefault()}>
                 Forgot password?
               </a>
             </div>
 
-            <button className="primaryBtn" type="submit">
-              Sign in
+            {error && (
+              <div style={{ marginTop: 10, padding: 10, borderRadius: 10, background: "rgba(255,0,0,0.08)" }}>
+                {error}
+              </div>
+            )}
+
+            <button className="primaryBtn" type="submit" disabled={submitting}>
+              {submitting ? "Signing in..." : "Sign in"}
             </button>
 
             <div className="divider">or</div>
 
             <div className="socialRow">
-              <button
-                type="button"
-                className="socialBtn"
-                onClick={() => alert("Later")}
-              >
+              <button type="button" className="socialBtn" onClick={() => alert("Later")}>
                 <span className="socialIcon">G</span> Continue with Google
               </button>
-              <button
-                type="button"
-                className="socialBtn"
-                onClick={() => alert("Later")}
-              >
+              <button type="button" className="socialBtn" onClick={() => alert("Later")}>
                 <span className="socialIcon">f</span> Continue with Facebook
               </button>
             </div>
@@ -141,7 +154,6 @@ export default function Login() {
             </div>
           </form>
         </div>
-
       </div>
     </div>
   );

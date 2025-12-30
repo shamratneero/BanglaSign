@@ -11,3 +11,7 @@ sqlparse==0.5.4
 whitenoise==6.11.0
 djangorestframework
 djangorestframework-simplejwt
+Pillow
+torch
+torchvision
+

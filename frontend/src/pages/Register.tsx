@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
+import { useAuth } from "../auth/useAuth";
 
 export default function Register() {
   const nav = useNavigate();
+  const { register, refreshMe } = useAuth();
+
   const [first, setFirst] = useState("Shamrat");
   const [last, setLast] = useState("Neero");
   const [email, setEmail] = useState("you@example.com");
@@ -11,11 +14,40 @@ export default function Register() {
   const [showPw, setShowPw] = useState(false);
   const [agree, setAgree] = useState(true);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agree) return alert("Please accept Terms & Conditions");
-    // TODO: hook API later
-    nav("/dashboard");
+    setError(null);
+
+    if (!agree) {
+      setError("Please accept Terms & Conditions");
+      return;
+    }
+
+    // Backend expects username/password.
+    // We'll use email as username so UX remains normal.
+    const username = email.trim();
+    if (!username) {
+      setError("Email/username is required");
+      return;
+    }
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await register(username, password); // <-- IMPORTANT: new signature
+      await refreshMe();                 // ensure context has /api/me
+      nav("/dashboard", { replace: true });
+    } catch (err: any) {
+      setError(err?.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -33,11 +65,7 @@ export default function Register() {
                 </div>
               </div>
 
-              <a
-                className="ghostPill"
-                href="/"
-                onClick={(e) => e.preventDefault()}
-              >
+              <a className="ghostPill" href="/" onClick={(e) => e.preventDefault()}>
                 Back to website →
               </a>
             </div>
@@ -52,7 +80,6 @@ export default function Register() {
               </p>
             </div>
 
-            {/* Optional: keep a placeholder row without breaking JSX */}
             <div className="deviceRow">
               <div className="deviceCard">
                 <div className="deviceDot" />
@@ -73,6 +100,7 @@ export default function Register() {
               Already have an account? <Link to="/login">Log in</Link>
             </p>
 
+            {/* Keep these fields for UI, but backend ignores them for now */}
             <div className="grid2">
               <div className="field">
                 <label>First name</label>
@@ -93,13 +121,13 @@ export default function Register() {
             </div>
 
             <div className="field">
-              <label>Email</label>
+              <label>Email / Username</label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                type="email"
-                autoComplete="email"
+                type="text"
+                autoComplete="username"
               />
             </div>
 
@@ -138,25 +166,23 @@ export default function Register() {
               </span>
             </label>
 
-            <button className="primaryBtn" type="submit">
-              Create account
+            {error && (
+              <div style={{ marginTop: 10, padding: 10, borderRadius: 10, background: "rgba(255,0,0,0.08)" }}>
+                {error}
+              </div>
+            )}
+
+            <button className="primaryBtn" type="submit" disabled={submitting}>
+              {submitting ? "Creating..." : "Create account"}
             </button>
 
             <div className="divider">or register with</div>
 
             <div className="socialRow">
-              <button
-                type="button"
-                className="socialBtn"
-                onClick={() => alert("Later")}
-              >
+              <button type="button" className="socialBtn" onClick={() => alert("Later")}>
                 <span className="socialIcon">G</span> Google
               </button>
-              <button
-                type="button"
-                className="socialBtn"
-                onClick={() => alert("Later")}
-              >
+              <button type="button" className="socialBtn" onClick={() => alert("Later")}>
                 <span className="socialIcon"></span> Apple
               </button>
             </div>
