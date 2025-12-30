@@ -16,4 +16,5 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY . /app
 
-CMD ["sh", "-c", "gunicorn --chdir /app config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "gunicorn --chdir /app/backend backend.config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+
