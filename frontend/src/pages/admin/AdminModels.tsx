@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../styles/dashboard.css";
-import { listModels, uploadModel, toggleModel, activateModel } from "../../lib/adminConsoleApi";
+import { listModels, uploadModel, toggleModel, activateModel, deleteModel } from "../../lib/adminConsoleApi";
 import { useNavigate } from "react-router-dom";
 
 type ModelRow = {
@@ -131,6 +131,19 @@ export default function AdminModels() {
                         >
                           Activate
                         </button>
+
+                        <button
+                            className="dashGhostBtn"
+                            onClick={async () => {
+                                const ok = confirm(`Delete model "${m.name}"? This cannot be undone.`);
+                                if (!ok) return;
+                                await deleteModel(m.id);
+                                await refresh();
+                            }}
+                            >
+                            Delete
+                        </button>
+
                       </div>
                     </div>
                   ))}

@@ -31,6 +31,8 @@ urlpatterns = [
     path("admin/models/upload/", admin_views.admin_models_upload),
     path("admin/models/<int:model_id>/toggle/", admin_views.admin_models_toggle),
     path("admin/models/<int:model_id>/activate/", admin_views.admin_models_set_active),
+    path("admin/models/<int:model_id>/delete/", admin_views.admin_models_delete),
+
 
     #ML API
 

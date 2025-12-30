@@ -109,3 +109,28 @@ def admin_me(request):
             "is_superuser": u.is_superuser,
         }
     )
+
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from rest_framework import status
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
+def admin_models_upload(request):
+    data = request.data.dict()  # text fields only
+    f = request.FILES.get("file")  # must match your frontend form field name
+
+    if not f:
+        return Response({"detail": "No file uploaded (expected field 'file')."}, status=400)
+
+    # Example: if serializer expects "file"
+    payload = {**data, "file": f}
+
+    ser = ModelUploadSerializer(data=payload)
+    if not ser.is_valid():
+        return Response(ser.errors, status=400)
+
+    obj = ser.save()
+    return Response({"id": obj.id, "name": obj.name}, status=201)
+

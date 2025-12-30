@@ -37,3 +37,9 @@ export async function adminLogout() {
   const res = await api.post("/api/admin/auth/logout/", {});
   return res.data;
 }
+
+export async function deleteModel(id: number) {
+    const res = await api.delete(`/api/admin/models/${id}/delete/`);
+    return res.data;
+  }
+  

@@ -15,6 +15,9 @@ from .permissions import IsAdminUserStrict
 from .models import MLModel, InferenceEvent
 from .serializers import MLModelSerializer, MLModelListSerializer
 
+from django.contrib.auth import get_user_model
+
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminUserStrict])
@@ -34,12 +37,9 @@ def admin_overview(request):
     )
 
     # unique users last 7d
-    active_users_7d = (
-        InferenceEvent.objects.filter(created_at__gte=since, user__isnull=False)
-        .values("user_id")
-        .distinct()
-        .count()
-    )
+    User = get_user_model()
+    registrations_7d = User.objects.filter(date_joined__gte=since).count()
+
 
     return Response(
         {
@@ -49,7 +49,8 @@ def admin_overview(request):
                 "active": MLModelListSerializer(active).data if active else None,
             },
             "usage": {
-                "active_users_7d": active_users_7d,
+                "active_users_7d": registrations_7d,
+
                 "daily_inferences_7d": list(daily),
             },
         }
@@ -66,6 +67,8 @@ def admin_models_list(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated, IsAdminUserStrict])
 @parser_classes([MultiPartParser, FormParser])
+
+
 def admin_models_upload(request):
     """
     multipart/form-data:
@@ -75,14 +78,23 @@ def admin_models_upload(request):
       - description (optional)
       - file (.pth)
     """
-    data = request.data.copy()
-    ser = MLModelSerializer(data=data)
+    data = request.data.dict()  # text fields
+    uploaded = request.FILES.get("file")  # serializer field is "file"
+
+    if not uploaded:
+        return Response(
+            {"detail": "No file uploaded (expected field 'file')."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    payload = {**data, "file": uploaded}
+
+    ser = MLModelSerializer(data=payload)
     if not ser.is_valid():
         return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
 
     m = ser.save(created_by=request.user)
     return Response(MLModelSerializer(m).data, status=status.HTTP_201_CREATED)
-
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated, IsAdminUserStrict])
@@ -118,3 +130,19 @@ def admin_models_set_active(request, model_id: int):
         m.save(update_fields=["is_active"])
 
     return Response({"detail": "ok", "active": MLModelListSerializer(m).data})
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated, IsAdminUserStrict])
+def admin_models_delete(request, model_id: int):
+    m = MLModel.objects.filter(id=model_id).first()
+    if not m:
+        return Response({"detail": "Model not found"}, status=404)
+
+    # delete file from disk first
+    if m.file:
+        m.file.delete(save=False)
+
+    m.delete()
+    return Response({"detail": "deleted"}, status=204)
+
