@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 COPY . /app
 
 # collectstatic at runtime if you want; for now we keep it simple
-CMD ["sh", "-c", "gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "gunicorn --chdir /app config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
 
 
 
