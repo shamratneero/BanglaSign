@@ -1,6 +1,6 @@
 import "../styles/landing.css";
 
-const DOCS_URL = "https://docs.specifyapp.com/"; // replace with your docs later
+const DOCS_URL = "https://docs.google.com/document/d/1mpQBmjX3Olswji-g4TvGfoAXSoj2nCY8/edit?usp=sharing&ouid=102566180684021942800&rtpof=true&sd=true"; // replace with your docs later
 const GITHUB_URL = "https://github.com/shamratneero/BanglaSign"; // replace if needed
 const PAPER_URL = "/assets/paper.pdf"; // put your pdf in: frontend/public/assets/paper.pdf
 
